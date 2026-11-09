@@ -15,6 +15,10 @@ Une console web locale pour piloter une **paire stéréo Devialet Phantom II** d
 >
 > Utilisation à vos risques (voir [Limites et risques](#limites-et-risques)).
 
+<p align="center">
+  <img src="docs/screenshot.png" alt="Console : lecture Bluetooth, basses et aigus, volume, analyseur de spectre, égaliseur graphique 10 bandes et sortie audio Windows" width="480">
+</p>
+
 ## Fonctions
 
 - **Paire stéréo** :
@@ -194,6 +198,7 @@ agent/windows/     agent C# de l'analyseur de spectre
 scripts/           outils Windows en lecture seule et validation de l'égaliseur
 prototypes/        prototype de calcul de l'égaliseur
 examples/          modèles de configuration
+docs/              capture d'écran du README
 tests/             tests Python et JavaScript
 reports/           rapports de conception et de validation publiés
 ```
