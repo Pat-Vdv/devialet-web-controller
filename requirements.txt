@@ -1,0 +1,8 @@
+# Runtime: web controller (devialet_web) and diagnostic tool (devialet_diag).
+# Reproducible install: pip install -r requirements.txt -c constraints.txt
+fastapi>=0.110
+uvicorn>=0.29
+websockets>=12
+httpx>=0.27
+zeroconf>=0.131
+bleak>=0.22

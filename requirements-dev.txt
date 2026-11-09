@@ -1,0 +1,3 @@
+# Tests (pytest; the JavaScript tests need Node.js >= 18, run with: node --test tests/js/*.test.cjs)
+-r requirements.txt
+pytest>=8

@@ -1,0 +1,6 @@
+# Example Equalizer APO config.txt (C:\Program Files\EqualizerAPO\config\config.txt).
+# Edit it by hand, once, after backing up your own config.txt; the controller never writes this file.
+# Device: limits the settings to one output (name as shown by Equalizer APO's Configurator).
+# "My Phantom System" is an example: use the Bluetooth name of your stereo pair.
+Device: My Phantom System
+Include: devialet-eq.txt

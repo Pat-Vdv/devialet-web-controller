@@ -1,0 +1,270 @@
+<!doctype html>
+<html lang="fr" data-theme="technics">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Phantom II</title>
+  <!-- ?v=: one version for every file below; change it whenever a static file changes, so that browsers fetch them
+       again instead of reusing a cached copy (a stale app.css left the layout buttons unstyled) -->
+  <link rel="stylesheet" href="/static/app.css?v=243g2">
+  <!-- Synchronous on purpose: applies the saved theme before the first paint -->
+  <script src="/static/theme.js?v=243g2"></script>
+</head>
+<body>
+  <main class="console">
+    <!-- A. Faceplate header -->
+    <header class="card faceplate">
+      <div class="brand" aria-label="Devialet Phantom II">
+        <span class="brand-mark">DEVIALET</span>
+        <span class="brand-model">PHANTOM II</span>
+      </div>
+      <div class="system-title">
+        <p class="eyebrow">Système stéréo</p>
+        <h1 id="system-name">…</h1>
+      </div>
+      <div class="faceplate-right">
+        <span id="link" class="pill pill-wait link-pill" role="status" aria-live="polite">
+          <span class="led" aria-hidden="true"></span><span id="link-label">Connexion…</span>
+        </span>
+        <span id="theme-home" class="theme-home">
+          <label id="theme-control" class="ctl theme-ctl">Thème
+            <select id="theme-select" aria-label="Thème de l'interface"></select>
+          </label>
+        </span>
+      </div>
+      <p id="link-detail" class="link-detail"></p>
+    </header>
+
+    <p id="errors" class="errors" role="status" aria-live="polite"></p>
+
+    <!-- Movable blocks (V2.4.3-B3.1): order saved by layout.js; the HTML order is the default.
+         data-block: stable id (never rename); data-block-head: the header that moves the block (its free area, not its controls). -->
+    <div class="blocks" id="blocks">
+
+    <!-- B. Music player -->
+    <section class="card now-playing" aria-label="Lecture en cours" data-block="player" data-block-label="Lecteur audio">
+      <div class="block-head" data-block-head><p class="eyebrow" id="source-name">Source</p></div>
+      <h2 id="track-title">—</h2>
+      <p id="track-artist" class="muted"></p>
+      <p id="play-state" class="muted small"></p>
+      <div class="transport">
+        <button id="btn-previous" class="round" aria-label="Précédent" title="Précédent">
+          <svg viewBox="0 0 24 24"><path d="M6 5h2v14H6zM20 5v14L9 12z"/></svg>
+        </button>
+        <button id="btn-toggle" class="round primary" aria-label="Lecture" title="Lecture / pause">
+          <svg id="icon-play" viewBox="0 0 24 24"><path d="M7 4v16l13-8z"/></svg>
+          <svg id="icon-pause" viewBox="0 0 24 24" hidden><path d="M6 4h4v16H6zM14 4h4v16h-4z"/></svg>
+        </button>
+        <button id="btn-next" class="round" aria-label="Suivant" title="Suivant">
+          <svg viewBox="0 0 24 24"><path d="M16 5h2v14h-2zM4 5v14l11-7z"/></svg>
+        </button>
+      </div>
+    </section>
+
+    <!-- C. Spectrum analyzer (palette follows the global theme) -->
+    <section class="card spectrum" id="spectrum-card" data-theme="technics" aria-label="Analyseur de spectre"
+             data-block="spectrum" data-block-label="Analyseur de spectre">
+      <div class="spectrum-head" data-block-head>
+        <p class="eyebrow">Analyseur de spectre</p>
+        <span id="spectrum-track" class="spectrum-track"></span>
+        <span id="spectrum-pill" class="pill pill-wait">…</span>
+        <button id="spectrum-exit" class="text-btn spectrum-exit" aria-label="Quitter le plein écran">
+          Quitter ✕</button>
+      </div>
+      <div class="spectrum-screen" id="spectrum-screen">
+        <canvas id="spectrum-canvas" aria-label="Niveaux par bande de fréquence, gauche et droite"></canvas>
+        <div id="spectrum-overlay" class="spectrum-overlay" role="status" aria-live="polite"></div>
+      </div>
+      <div class="spectrum-controls" id="spectrum-controls">
+        <button id="spectrum-toggle" class="text-btn">Activer</button>
+        <div class="segmented" role="group" aria-label="Mode d'affichage">
+          <button id="spectrum-stereo" class="seg on" aria-pressed="true">Stéréo</button>
+          <button id="spectrum-mono" class="seg" aria-pressed="false">Mono</button>
+        </div>
+        <label class="ctl">Sensibilité
+          <input type="range" id="spectrum-sensitivity" min="-12" max="12" step="1" value="0"
+                 aria-describedby="spectrum-sensitivity-value">
+          <output id="spectrum-sensitivity-value" class="ctl-value">0 dB</output>
+        </label>
+        <label class="switch"><input type="checkbox" id="spectrum-peak" checked> Peak hold</label>
+        <select id="spectrum-hold" aria-label="Durée du peak hold">
+          <option value="500">500 ms</option>
+          <option value="1000">1 s</option>
+          <option value="2000">2 s</option>
+        </select>
+        <button id="spectrum-fullscreen" class="text-btn">Plein écran</button>
+      </div>
+      <p id="spectrum-info" class="muted small"></p>
+    </section>
+
+    <!-- D. Audio controls: BASS — VOLUME — TREBLE -->
+    <section class="card tone audio-deck" id="tone-card" aria-labelledby="deck-title"
+             data-block="audio" data-block-label="Commandes audio">
+      <div class="tone-head" data-block-head>
+        <p class="eyebrow" id="deck-title">Commandes audio</p>
+        <span class="tone-status"><span id="tone-title">Tonalité</span>
+          <span id="tone-pill" class="pill pill-wait">…</span></span>
+      </div>
+      <div class="deck">
+        <div class="tone-unit off" data-band="bass">
+          <div class="tone-dial">
+            <svg class="tone-scale" viewBox="0 0 180 180" aria-hidden="true"></svg>
+            <div class="tone-knob" id="tone-bass" role="slider" tabindex="-1" aria-label="Basses"
+                 aria-valuemin="-6" aria-valuemax="6" aria-valuenow="0" aria-disabled="true"
+                 aria-describedby="tone-help" title="Double-clic : 0 dB">
+              <span class="tone-pointer"><span class="tone-led"></span></span>
+            </div>
+          </div>
+          <p class="tone-name">Bass</p>
+          <output class="tone-readout" for="tone-bass">— dB</output>
+          <p class="tone-note"></p>
+        </div>
+
+        <div class="volume-block" role="group" aria-labelledby="volume-label">
+          <p class="tone-name" id="volume-label">Volume</p>
+          <output id="volume-value" class="volume-display" aria-live="off">—</output>
+          <div class="volume-row">
+            <button id="btn-vol-down" class="round small-btn" aria-label="Baisser le volume">−</button>
+            <input id="volume" type="range" min="0" max="50" step="1" value="0" disabled
+                   aria-label="Volume">
+            <button id="btn-vol-up" class="round small-btn" aria-label="Monter le volume">+</button>
+          </div>
+          <p class="tone-note" id="volume-note"></p>
+        </div>
+
+        <div class="tone-unit off" data-band="treble">
+          <div class="tone-dial">
+            <svg class="tone-scale" viewBox="0 0 180 180" aria-hidden="true"></svg>
+            <div class="tone-knob" id="tone-treble" role="slider" tabindex="-1" aria-label="Aigus"
+                 aria-valuemin="-6" aria-valuemax="6" aria-valuenow="0" aria-disabled="true"
+                 aria-describedby="tone-help" title="Double-clic : 0 dB">
+              <span class="tone-pointer"><span class="tone-led"></span></span>
+            </div>
+          </div>
+          <p class="tone-name">Treble</p>
+          <output class="tone-readout" for="tone-treble">— dB</output>
+          <p class="tone-note"></p>
+        </div>
+      </div>
+      <div class="tone-foot">
+        <p id="tone-help" class="tone-help">Glisser vers le haut ou la droite · flèches, Page ↑/↓,
+          Début/Fin · 0 ou double-clic : neutre. Réglage des enceintes, toutes sources.</p>
+        <button id="tone-neutral" class="text-btn tone-btn" disabled>Neutre</button>
+      </div>
+      <p id="tone-message" class="tone-message small" role="status" aria-live="polite"></p>
+    </section>
+
+    <section class="card tone graphic-eq off" id="eq-card" aria-labelledby="eq-title"
+             data-block="eq" data-block-label="Égaliseur graphique">
+      <div class="tone-head" data-block-head>
+        <p class="eyebrow" id="eq-title">Égaliseur graphique</p>
+        <span class="tone-status"><span>Equalizer APO</span>
+          <span id="eq-pill" class="pill pill-wait">…</span></span>
+      </div>
+      <div class="eq-controls">
+        <button id="eq-power" class="eq-power" aria-pressed="false" disabled>
+          <span class="eq-power-led" aria-hidden="true"></span><span id="eq-power-label">Désactivé</span>
+        </button>
+        <div class="eq-preamp">
+          <span class="eq-preamp-label" id="eq-preamp-label">Préampli</span>
+          <output id="eq-preamp" class="tone-readout eq-preamp-display" aria-labelledby="eq-preamp-label">— dB</output>
+        </div>
+        <button id="eq-reset" class="text-btn tone-btn" disabled>Réinitialiser</button>
+      </div>
+      <div class="eq-preset-row">
+        <span class="eq-preamp-label" id="eq-presets-label">Préréglage</span>
+        <div class="eq-presets" id="eq-presets" role="group" aria-labelledby="eq-presets-label"></div>
+      </div>
+      <div class="eq-confirm" id="eq-confirm" role="alertdialog" aria-labelledby="eq-confirm-title"
+           aria-describedby="eq-confirm-text" hidden>
+        <p class="eq-confirm-title" id="eq-confirm-title">Hausse de niveau</p>
+        <p class="eq-confirm-text" id="eq-confirm-text"></p>
+        <div class="eq-confirm-actions">
+          <button type="button" id="eq-confirm-cancel" class="text-btn tone-btn">Annuler</button>
+          <button type="button" id="eq-confirm-ok" class="text-btn tone-btn">Appliquer quand même</button>
+        </div>
+      </div>
+      <div class="eq-board" id="eq-board" role="group" aria-label="Bandes de l'égaliseur" aria-describedby="eq-help"></div>
+      <div class="tone-foot">
+        <p id="eq-help" class="tone-help">Glisser un curseur · flèches ±0,5 dB · double-clic : 0 dB.
+          Agit sur le son de Windows envoyé en Bluetooth à la paire Phantom, pas sur les autres sources.
+          Le préampli baisse automatiquement le niveau quand une bande est amplifiée.
+          Préréglages : courbes fixes ; Custom rappelle votre dernier réglage manuel.</p>
+      </div>
+      <p id="eq-message" class="tone-message small" role="status" aria-live="polite"></p>
+    </section>
+
+    <!-- E. Windows audio output (Bluetooth) -->
+    <section class="card bt" aria-label="Sortie audio Windows" data-block="bluetooth" data-block-label="Sortie audio Windows">
+      <div class="systems-head" data-block-head>
+        <p class="eyebrow">Sortie audio Windows · Bluetooth</p>
+        <span id="bt-pill" class="pill pill-wait">…</span>
+      </div>
+      <h2 id="bt-status">—</h2>
+      <p id="bt-stream" class="muted small"></p>
+      <div class="bt-links">
+        <a class="text-btn" href="ms-settings:sound">Choisir la sortie audio</a>
+        <a class="text-btn" href="ms-settings:bluetooth">Réglages Bluetooth</a>
+      </div>
+      <details id="bt-wizard">
+        <summary>Appairer un nouvel appareil (PC, téléphone…)</summary>
+        <ol class="bt-steps">
+          <li id="bt-step-free">Libérez l'enceinte : coupez le Bluetooth de l'appareil connecté.</li>
+          <li>Sur le PC : <a href="ms-settings:bluetooth">Réglages Bluetooth</a> → <b>Ajouter un appareil</b>
+            → <b>Bluetooth</b>, et laissez la recherche ouverte.</li>
+          <li>
+            <button id="btn-pair" class="text-btn">Rendre l'enceinte visible (≈ 2 min)</button>
+            <span id="bt-countdown" class="muted small"></span>
+          </li>
+          <li>Dans la fenêtre Windows, choisissez <b id="bt-name">« My Phantom System »</b>, et non les entrées « PHANTOM ».</li>
+          <li><a href="ms-settings:sound">Sortie audio</a> → choisissez <b id="bt-name2">« My Phantom System »</b>.</li>
+        </ol>
+        <p class="muted small">En Bureau à distance : réglez le client RDP sur « Lire sur l'ordinateur
+          distant », sinon la sortie n'apparaît pas.</p>
+      </details>
+      <p id="bt-message" class="small" role="status" aria-live="polite"></p>
+    </section>
+
+    </div>
+
+    <div class="layout-bar">
+      <p id="layout-help" class="sr-only">Pour déplacer un bloc, glisser son en-tête (sur écran tactile : appui
+        maintenu puis glisser). Au clavier : boutons Monter et Descendre, ou flèches haut et bas sur ces boutons.
+        L'ordre est enregistré dans ce navigateur.</p>
+      <p id="layout-status" class="sr-only" role="status" aria-live="polite"></p>
+      <button id="layout-reset" class="text-btn layout-reset" disabled>Réinitialiser la disposition</button>
+    </div>
+    <!-- Right after the blocks: the saved order is restored before the first paint -->
+    <script src="/static/layout-core.js?v=243g2"></script>
+    <script src="/static/layout.js?v=243g2"></script>
+
+    <!-- F. System information (collapsible) -->
+    <details class="card sysinfo" id="system-info">
+      <summary><span class="eyebrow">Informations système</span>
+        <span id="sysinfo-summary" class="muted small"></span></summary>
+      <div class="sysinfo-body">
+        <section class="speakers" id="speakers" aria-label="Enceintes"></section>
+        <section class="systems" aria-label="Systèmes détectés">
+          <div class="systems-head">
+            <p class="eyebrow">Systèmes détectés</p>
+            <button id="btn-scan" class="text-btn">Rechercher les enceintes</button>
+          </div>
+          <p id="scan-status" class="muted small" role="status" aria-live="polite"></p>
+          <ul id="systems-list" class="systems-list"></ul>
+        </section>
+      </div>
+    </details>
+  </main>
+  <script src="/static/link-status.js?v=243g2"></script>
+  <script src="/static/app.js?v=243g2"></script>
+  <script src="/static/discovery.js?v=243g2"></script>
+  <script src="/static/bluetooth.js?v=243g2"></script>
+  <script src="/static/tone-core.js?v=243g2"></script>
+  <script src="/static/tone.js?v=243g2"></script>
+  <script src="/static/eq-core.js?v=243g2"></script>
+  <script src="/static/eq.js?v=243g2"></script>
+  <script src="/static/spectrum-ballistics.js?v=243g2"></script>
+  <script src="/static/spectrum-settings.js?v=243g2"></script>
+  <script src="/static/spectrum.js?v=243g2"></script>
+</body>
+</html>

@@ -1,0 +1,9 @@
+[project]
+name = "devialet-local-control"
+version = "0.1.0"
+description = "Local diagnostic (and later control) tools for Devialet Phantom II speakers"
+requires-python = ">=3.10"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
